@@ -1,0 +1,33 @@
+[project]
+name = "datasette-enrichments-re2"
+version = "0.1"
+description = "Enrich data using regular expressions powered by re2"
+readme = "README.md"
+authors = [{name = "Simon Willison"}]
+license = {text = "Apache-2.0"}
+classifiers=[
+    "Framework :: Datasette",
+    "License :: OSI Approved :: Apache Software License"
+]
+requires-python = ">=3.8"
+dependencies = [
+    "datasette",
+    "datasette-enrichments",
+    "google-re2",
+    "sqlite-utils",
+]
+
+[project.urls]
+Homepage = "https://github.com/datasette/datasette-enrichments-re2"
+Changelog = "https://github.com/datasette/datasette-enrichments-re2/releases"
+Issues = "https://github.com/datasette/datasette-enrichments-re2/issues"
+CI = "https://github.com/datasette/datasette-enrichments-re2/actions"
+
+[project.entry-points.datasette]
+enrichments_re2 = "datasette_enrichments_re2"
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-asyncio"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "strict"
