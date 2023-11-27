@@ -118,7 +118,8 @@ class Re2Enrichment(Enrichment):
         if to_update:
 
             def fn(conn):
+                db = sqlite_utils.Database(conn)
                 for ids, values in to_update:
-                    sqlite_utils.Database(conn)[table].update(ids, values, alter=True)
+                    db[table].update(ids, values, alter=True)
 
             await db.execute_write_fn(fn, block=True)
