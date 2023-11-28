@@ -1,6 +1,6 @@
 [project]
 name = "datasette-enrichments-re2"
-version = "0.1"
+version = "0.1a0"
 description = "Enrich data using regular expressions"
 readme = "README.md"
 authors = [{name = "Simon Willison"}]
