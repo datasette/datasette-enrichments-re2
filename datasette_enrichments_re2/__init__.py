@@ -82,13 +82,11 @@ class Re2Enrichment(Enrichment):
 
     async def enrich_batch(
         self,
-        datasette: "Datasette",
         db: "Database",
         table: str,
         rows: List[dict],
         pks: List[str],
         config: dict,
-        job_id: int,
     ):
         pattern = config["regex"]
         re = re2.compile(pattern)
