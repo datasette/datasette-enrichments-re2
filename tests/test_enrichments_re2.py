@@ -18,7 +18,7 @@ async def datasette():
 
 
 async def _cookies(datasette):
-    cookies = {"ds_actor": datasette.client.actor_cookie({"id": "root"})}
+    cookies = {"ds_actor": datasette.sign({"a": {"id": "root"}}, "actor")}
     csrftoken = (
         await datasette.client.get("/-/enrich/demo/news/re2", cookies=cookies)
     ).cookies["ds_csrftoken"]
