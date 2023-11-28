@@ -1,0 +1,21 @@
+{% extends "enrichment.html" %}
+
+{% block below_form %}
+<script>
+const modeSelect = document.querySelector('#mode');
+const labelForSingleColumn = document.querySelector('label[for="single_column"]');
+const inputForSingleColumn = document.querySelector('#single_column');
+function handleModeChange() {
+    // Check if the selected value is 'multi'
+    if (modeSelect.value === 'multi') {
+        labelForSingleColumn.style.display = 'none';
+        inputForSingleColumn.style.display = 'none';
+    } else {
+        labelForSingleColumn.style.display = '';
+        inputForSingleColumn.style.display = '';
+    }
+}
+modeSelect.addEventListener('change', handleModeChange);
+handleModeChange();
+</script>
+{% endblock %}
