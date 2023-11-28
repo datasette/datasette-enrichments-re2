@@ -17,6 +17,7 @@ datasette install datasette-enrichments-re2
 
 This enrichment allows you to run a regular expression against a column and perform one of the following:
 
+- Execute a search and replace against that column
 - Extract the first matching result and store that in the specified column (adding a column if necessary)
 - Extract all matching results and store them as a JSON array in the specified column. If the regular expression uses named capture groups this will be an array of objects, otherwise it will be an array of strings.
 - Execute a regular expression with named capture groups and store the results in multiple columns, one for each of those named groups

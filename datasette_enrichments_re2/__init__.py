@@ -43,6 +43,7 @@ class Re2Enrichment(Enrichment):
             mode = SelectField(
                 "Capture mode",
                 choices=[
+                    ("replace", "Search and replace "),
                     ("single", "Store first match in a single column"),
                     ("json", "Store all matches as JSON in a single column"),
                     ("multi", "Use named capture groups and store in multiple columns"),
@@ -56,6 +57,9 @@ class Re2Enrichment(Enrichment):
             single_column = StringField(
                 "Single output column",
             )
+            replacement = StringField(
+                "Replacement",
+            )
 
             # Custom validator, single_column must be set if choice is single
             def validate_single_column(form, field):
@@ -68,6 +72,11 @@ class Re2Enrichment(Enrichment):
                     raise ValidationError(
                         "Regular expression must contain named capture groups."
                     )
+
+            # if mode is "replace" confirm replacement is set
+            def validate_replacement(form, field):
+                if form.mode.data == "replace" and not field.data:
+                    raise ValidationError("A replacement is required.")
 
         return ConfigForm
 
@@ -85,6 +94,9 @@ class Re2Enrichment(Enrichment):
         re = re2.compile(pattern)
         source_column = config["source_column"]
         single_column = config["single_column"]
+
+        if not single_column and config["mode"] == "replace":
+            single_column = source_column
 
         if not pks:
             pks = ["rowid"]
@@ -114,6 +126,19 @@ class Re2Enrichment(Enrichment):
                 if matches:
                     ids = [row[pk] for pk in pks]
                     to_update.append((ids, {single_column: json.dumps(matches)}))
+        elif config["mode"] == "replace":
+            for row in rows:
+                ids = [row[pk] for pk in pks]
+                to_update.append(
+                    (
+                        ids,
+                        {
+                            single_column: re.sub(
+                                config["replacement"], row[source_column]
+                            )
+                        },
+                    )
+                )
 
         if to_update:
 

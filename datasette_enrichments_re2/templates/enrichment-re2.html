@@ -5,14 +5,26 @@
 const modeSelect = document.querySelector('#mode');
 const labelForSingleColumn = document.querySelector('label[for="single_column"]');
 const inputForSingleColumn = document.querySelector('#single_column');
+const labelForReplacement = document.querySelector('label[for="replacement"]');
+const inputForReplacement = document.querySelector('#replacement');
 function handleModeChange() {
-    // Check if the selected value is 'multi'
+    // If multi, hide the single column input
     if (modeSelect.value === 'multi') {
         labelForSingleColumn.style.display = 'none';
         inputForSingleColumn.style.display = 'none';
     } else {
         labelForSingleColumn.style.display = '';
         inputForSingleColumn.style.display = '';
+    }
+    // If replace, show the replacement field
+    if (modeSelect.value === 'replace') {
+        labelForReplacement.style.display = '';
+        inputForReplacement.style.display = '';
+        inputForSingleColumn.setAttribute('placeholder', 'Leave blank for same column as source')
+    } else {
+        labelForReplacement.style.display = 'none';
+        inputForReplacement.style.display = 'none';
+        inputForSingleColumn.setAttribute('placeholder', '');
     }
 }
 modeSelect.addEventListener('change', handleModeChange);
