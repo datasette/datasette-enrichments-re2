@@ -52,14 +52,18 @@ class Re2Enrichment(Enrichment):
             )
             regex = TextAreaField(
                 "Regular expression",
+                render_kw={
+                    "placeholder": "Use (?P<name>pattern) for named capture groups"
+                },
                 validators=[DataRequired(message="A regular expression is required.")],
             )
             replacement = StringField(
                 "Replacement",
+                render_kw={
+                    "placeholder": "Use \\1 to refer to first match, \\g<name> for named groups"
+                },
             )
-            single_column = StringField(
-                "Output column",
-            )
+            single_column = StringField("Output column")
 
             # Custom validator, single_column must be set if choice is single
             def validate_single_column(form, field):
