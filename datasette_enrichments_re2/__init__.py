@@ -58,7 +58,7 @@ class Re2Enrichment(Enrichment):
                 "Replacement",
             )
             single_column = StringField(
-                "Single output column",
+                "Output column",
             )
 
             # Custom validator, single_column must be set if choice is single
