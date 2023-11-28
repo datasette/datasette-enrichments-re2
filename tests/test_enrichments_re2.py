@@ -27,17 +27,87 @@ async def _cookies(datasette):
 
 
 @pytest.mark.asyncio
-async def test_single(datasette: Datasette):
+@pytest.mark.parametrize(
+    "post,expected",
+    (
+        (
+            # mode=single
+            {
+                "source_column": "body",
+                "regex": r"example (?P<letter>[a-z])",
+                "single_column": "letter",
+                "mode": "single",
+            },
+            [
+                {"body": "example a", "letter": "a"},
+                {"body": "example b", "letter": "b"},
+                {"body": "example c", "letter": "c"},
+            ],
+        ),
+        (
+            # mode=replace
+            {
+                "source_column": "body",
+                "regex": r"example (?P<letter>[a-z])",
+                "single_column": "",  # Blank means same column
+                "mode": "replace",
+                "replacement": r"replaced \1",
+            },
+            [
+                {"body": "replaced a"},
+                {"body": "replaced b"},
+                {"body": "replaced c"},
+            ],
+        ),
+        (
+            # mode=json with no named capture
+            {
+                "source_column": "body",
+                "regex": r"example ([a-z])",
+                "single_column": "letters",
+                "mode": "json",
+            },
+            [
+                {"body": "example a", "letters": '["a"]'},
+                {"body": "example b", "letters": '["b"]'},
+                {"body": "example c", "letters": '["c"]'},
+            ],
+        ),
+        (
+            # mode=json with named capture
+            {
+                "source_column": "body",
+                "regex": r"example (?P<letter>[a-z])",
+                "single_column": "letters",
+                "mode": "json",
+            },
+            [
+                {"body": "example a", "letters": '[{"letter": "a"}]'},
+                {"body": "example b", "letters": '[{"letter": "b"}]'},
+                {"body": "example c", "letters": '[{"letter": "c"}]'},
+            ],
+        ),
+        (
+            # mode=multi
+            {
+                "source_column": "body",
+                "regex": r"(?P<example>example) (?P<letter>[a-z])",
+                "mode": "multi",
+            },
+            [
+                {"body": "example a", "example": "example", "letter": "a"},
+                {"body": "example b", "example": "example", "letter": "b"},
+                {"body": "example c", "example": "example", "letter": "c"},
+            ],
+        ),
+    ),
+)
+async def test_re2(datasette: Datasette, post: dict, expected: list):
     cookies = await _cookies(datasette)
+    post["csrftoken"] = cookies["ds_csrftoken"]
     response = await datasette.client.post(
         "/-/enrich/demo/news/re2",
-        data={
-            "source_column": "body",
-            "regex": r"example (?P<letter>[a-z])",
-            "single_column": "letter",
-            "mode": "single",
-            "csrftoken": cookies["ds_csrftoken"],
-        },
+        data=post,
         cookies=cookies,
     )
     assert response.status_code == 302
@@ -49,43 +119,6 @@ async def test_single(datasette: Datasette):
     assert job["status"] == "finished"
     assert job["enrichment"] == "re2"
     assert job["done_count"] == 3
-    results = await db.execute("select body, letter from news order by body")
+    results = await db.execute("select * from news order by body")
     rows = [dict(r) for r in results.rows]
-    assert rows == [
-        {"body": "example a", "letter": "a"},
-        {"body": "example b", "letter": "b"},
-        {"body": "example c", "letter": "c"},
-    ]
-
-
-@pytest.mark.asyncio
-async def test_replCE(datasette: Datasette):
-    cookies = await _cookies(datasette)
-    response = await datasette.client.post(
-        "/-/enrich/demo/news/re2",
-        data={
-            "source_column": "body",
-            "regex": r"example (?P<letter>[a-z])",
-            "single_column": "",  # Blank means same column
-            "mode": "replace",
-            "replacement": r"replaced \1",
-            "csrftoken": cookies["ds_csrftoken"],
-        },
-        cookies=cookies,
-    )
-    assert response.status_code == 302
-    # Wait 0.5s and the enrichment should have run
-    await asyncio.sleep(0.5)
-    db = datasette.get_database("demo")
-    jobs = await db.execute("select * from _enrichment_jobs")
-    job = dict(jobs.first())
-    assert job["status"] == "finished"
-    assert job["enrichment"] == "re2"
-    assert job["done_count"] == 3
-    results = await db.execute("select body from news order by body")
-    rows = [dict(r) for r in results.rows]
-    assert rows == [
-        {"body": "replaced a"},
-        {"body": "replaced b"},
-        {"body": "replaced c"},
-    ]
+    assert rows == expected
