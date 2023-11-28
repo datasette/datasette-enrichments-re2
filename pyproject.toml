@@ -1,7 +1,7 @@
 [project]
 name = "datasette-enrichments-re2"
 version = "0.1"
-description = "Enrich data using regular expressions powered by re2"
+description = "Enrich data using regular expressions"
 readme = "README.md"
 authors = [{name = "Simon Willison"}]
 license = {text = "Apache-2.0"}

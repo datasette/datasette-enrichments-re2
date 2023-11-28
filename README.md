@@ -5,7 +5,7 @@
 [![Tests](https://github.com/datasette/datasette-enrichments-re2/workflows/Test/badge.svg)](https://github.com/datasette/datasette-enrichments-re2/actions?query=workflow%3ATest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/datasette/datasette-enrichments-re2/blob/main/LICENSE)
 
-Geocoding and reverse geocoding using re2
+Enrich data using regular expressions
 
 ## Installation
 
