@@ -54,11 +54,11 @@ class Re2Enrichment(Enrichment):
                 "Regular expression",
                 validators=[DataRequired(message="A regular expression is required.")],
             )
-            single_column = StringField(
-                "Single output column",
-            )
             replacement = StringField(
                 "Replacement",
+            )
+            single_column = StringField(
+                "Single output column",
             )
 
             # Custom validator, single_column must be set if choice is single
