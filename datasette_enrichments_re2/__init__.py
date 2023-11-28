@@ -29,7 +29,7 @@ def has_named_groups(pattern_string):
 class Re2Enrichment(Enrichment):
     name = "Regular expressions"
     slug = "re2"
-    description = "Extract data into new columns using regular expressions"
+    description = "Run search-and-replace or extract data into new columns using regular expressions"
 
     async def get_config_form(self, db: "Database", table: str):
         columns = await db.table_columns(table)
