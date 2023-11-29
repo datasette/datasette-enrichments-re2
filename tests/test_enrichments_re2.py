@@ -1,5 +1,5 @@
-import asyncio
 from datasette.app import Datasette
+from datasette_enrichments.utils import wait_for_job
 import pytest
 import pytest_asyncio
 
@@ -111,8 +111,8 @@ async def test_re2(datasette: Datasette, post: dict, expected: list):
         cookies=cookies,
     )
     assert response.status_code == 302
-    # Wait 0.5s and the enrichment should have run
-    await asyncio.sleep(0.5)
+    job_id = response.headers["Location"].split("=")[-1]
+    await wait_for_job(datasette, job_id, database="demo", timeout=1)
     db = datasette.get_database("demo")
     jobs = await db.execute("select * from _enrichment_jobs")
     job = dict(jobs.first())

@@ -12,7 +12,7 @@ classifiers=[
 requires-python = ">=3.8"
 dependencies = [
     "datasette",
-    "datasette-enrichments>=0.1a6",
+    "datasette-enrichments>=0.1a7",
     "google-re2",
     "sqlite-utils",
 ]
