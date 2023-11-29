@@ -1,6 +1,6 @@
 [project]
 name = "datasette-enrichments-re2"
-version = "0.1a0"
+version = "0.1"
 description = "Enrich data using regular expressions"
 readme = "README.md"
 authors = [{name = "Simon Willison"}]
@@ -12,7 +12,7 @@ classifiers=[
 requires-python = ">=3.8"
 dependencies = [
     "datasette",
-    "datasette-enrichments>=0.1a7",
+    "datasette-enrichments>=0.2",
     "google-re2",
     "sqlite-utils",
 ]
