@@ -1,20 +1,19 @@
 from datasette.app import Datasette
 from datasette_enrichments.utils import wait_for_job
 import pytest
-import pytest_asyncio
+
+import sqlite3
 
 
-@pytest_asyncio.fixture()
-async def datasette():
-    datasette = Datasette()
-    db = datasette.add_memory_database("demo")
-    # Drop all tables
-    for table in await db.table_names():
-        await db.execute_write("drop table {}".format(table))
-    await db.execute_write("create table news (body text)")
-    for text in ("example a", "example b", "example c"):
-        await db.execute_write("insert into news (body) values (?)", [text])
-    return datasette
+@pytest.fixture
+def datasette(tmpdir):
+    db_path = tmpdir / "demo.db"
+    db = sqlite3.connect(str(db_path))
+    with db:
+        db.execute("create table news (body text)")
+        for text in ("example a", "example b", "example c"):
+            db.execute("insert into news (body) values (?)", [text])
+    return Datasette([db_path])
 
 
 async def _cookies(datasette):
